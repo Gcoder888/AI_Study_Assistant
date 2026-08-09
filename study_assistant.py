@@ -15,7 +15,7 @@ while(True):
         text = "Do you have any follow up questions? \n"
     question = input(text)
 
-    if question == "exit":
+    if question.lower() == "no":
         break
 
     reponse = client.models.generate_content(
