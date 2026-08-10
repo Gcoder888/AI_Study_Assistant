@@ -6,21 +6,24 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+chat = client.chats.create(
+    model = "gemini-3.6-flash"
+)
+
 first_time = True
 while(True):
     if first_time:
         text = "What do you want to learn: "
         first_time = False
     else:
-        text = "Do you have any follow up questions? \n"
+        text = "\nYou: "
     question = input(text)
 
-    if question.lower() == "no":
+    if question.lower() == "done":
+        print("Goodbye")
         break
 
-    reponse = client.models.generate_content(
-        model="gemini-3.6-flash", 
-        contents=f"Explain this topic to me like a beginner: {question}"
-    )
+    reponse = chat.send_message(question)
 
+    print("\nAI Tutor: ")
     print(reponse.text)
