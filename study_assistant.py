@@ -7,7 +7,7 @@ import os
 # Load the variables stored in the .env file
 load_dotenv()
 
-# Create the Python schema that will structure the reponse
+# Create the Python schemas neccessary for the program
 class StudyReponse(BaseModel):
     topic: str
     difficulty: str
