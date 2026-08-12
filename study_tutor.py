@@ -1,8 +1,6 @@
-from google import genai
-from google.genai import types
 from pydantic import BaseModel
 
-def create_study_class():   
+def create_study_schema():   
     # Create the Python schemas neccessary for the program
     class StudyReponse(BaseModel):
         topic: str
@@ -12,20 +10,17 @@ def create_study_class():
         practice_question: str
     return StudyReponse
 
-def create_study_intructions(client):
+def create_study_intructions(topic):
     # Create the system_instructions based on what topic that user wants to study
-    topic = input("What topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
-    topic_instructions = client.models.generate_content(
-        model="gemini-3.6-flash", 
-        contents=f"""Create system instructions for a tutor on {topic} that include the AI's behavior
-            as a patient tutor, an explanation that the audience is learning and wants to understand
-            concepts, and these rules:
-            - Explain concepts clearly
-            - Use simple examples
-            - Ask the student questions to check understanding.
-            - Give practice problems when appropriate.
-            - Don't assume advanced knowledge.
-            """)
+    topic_instructions = f"""You are a patient {topic} tutor. 
+        The user is learning and wants to understand the concepts. 
+        Follow these rules when answering their questions
+        - Explain concepts clearly
+        - Use simple examples
+        - Ask the student questions to check understanding.
+        - Give practice problems when appropriate.
+        - Don't assume advanced knowledge.
+        """
     return topic_instructions
 
 

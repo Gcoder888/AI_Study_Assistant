@@ -10,19 +10,20 @@ def main():
     load_dotenv()
 
     # Create the Python schemas neccessary for the program
-    study_response_class = study_tutor.create_study_class()
+    study_response_schema = study_tutor.create_study_class()
 
     # Create the client and the chat that will be used for the conversation
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
     # Create the topic instructions
-    topic_instructions = study_tutor.create_study_intructions(client)
+    topic = input("What topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
+    topic_instructions = study_tutor.create_study_intructions(topic)
 
     chat = client.chats.create(
         model = "gemini-3.6-flash",
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
-            response_schema=study_response_class,
+            response_schema=study_response_schema,
             system_instruction=topic_instructions
             )
     )
