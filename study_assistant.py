@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 import os
 import study_tutor
+import study_quiz
 
 """
 Purpose:
@@ -18,42 +19,42 @@ def main():
     # Load the variables stored in the .env file
     load_dotenv()
 
-    # Create the Python schemas neccessary for the program
-    study_response_schema = study_tutor.create_study_class()
-
-    # Create the client and the chat that will be used for the conversation
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
-    # Create the topic instructions
-    topic = input("What topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
-    topic_instructions = study_tutor.create_study_intructions(topic)
-
-    chat = client.chats.create(
-        model = "gemini-3.6-flash",
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=study_response_schema,
-            system_instruction=topic_instructions
+    while(True):
+        # Decide whether the AI will be in quiz mode or study mode
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        mode = input("Enter 'quiz' for quiz mode and 'study' for study mode")
+        topic = input("What topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
+        if mode == "quiz":
+            quiz_schema = study_quiz.create_quiz_schema()
+            quiz_instructions = study_quiz.create_quiz_instructions(topic)
+            chat = client.chats.create(
+                model="gemini-3.6-flash", 
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=quiz_schema, 
+                    system_instruction=quiz_instructions
+                )
             )
-    )
-
-    # The loop that will run until the user tells it to stop by saying "done"
-    while(True): 
-        text = "\nYou: "
-        question = input(text)
-
-        # The input barriers that block certain inputs.
-        if question.strip() == "":
-            print("Please enter a question.")
-            continue
-        if len(question) > 2000:
-            print("Please enter a shorter question.")
-            continue
-        if question.lower() == "done":
-            print("Goodbye")
+            while(True):
+                pass
             break
 
-        study_tutor.print_study_response(chat, question)
+        elif mode == "study":
+            study_schema = study_tutor.create_study_schema()
+            topic_instructions = study_tutor.create_study_intructions(topic)
+            chat = client.chats.create(
+                model = "gemini-3.6-flash",
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=study_schema,
+                    system_instruction=topic_instructions
+                    )
+                )
+            while(True):
+                pass
+            break
+        else:
+            print("Enter a valid mode")
 
 if __name__ == "__main__":
     main()

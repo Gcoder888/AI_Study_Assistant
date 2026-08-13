@@ -11,7 +11,7 @@ Return Value:
     QuizQuestion: class
         This class holds the schema for a quiz question
 """
-def create_quiz_schemas():
+def create_quiz_schema():
     # Create the class used for the quiz
     class QuizQuestion(BaseModel):
        question: str
@@ -55,6 +55,25 @@ def create_quiz_instructions(topic: str):
         """
     return topic_instructions
 
+"""
+Purpose: 
+    This creates the instructions that the evaluation chat needs to work 
+    effectively. 
+Parameters:
+    topic: str
+        Provides the topic that is related to the question and answer. 
+Return Value: 
+    topic_instructions:
+        Includes the instructions for the evaluation chat. 
+"""
+def create_evaluation_instructions(topic: str):
+    # Create specificed evaluation instructions
+    topic_instructions = f"""You are a answer evaluator for
+    topic: {topic}. Understand that the student is learning and 
+    needs feedback that is constructice and helps the student 
+    learn.
+    """
+    return topic_instructions
 """
 Purpose: 
     Print the quiz question and the evaluation response that the AI provides. 
