@@ -5,6 +5,15 @@ from pydantic import BaseModel
 import os
 import study_tutor
 
+"""
+Purpose:
+    This runs the AI chatbot which asks what topic you want to 
+    study and then if you want to study with a chat or a quiz. 
+Parameters:
+    None
+Return Value:
+    None
+"""
 def main():
     # Load the variables stored in the .env file
     load_dotenv()
