@@ -1,10 +1,7 @@
-from google import genai
-from google.genai import types
-from dotenv import load_dotenv
-from pydantic import BaseModel
-import os
-import study_tutor
-import study_quiz
+from schema_creation import create_feedback_schema, create_quiz_schema, create_study_schema
+from instruction_creation import create_evaluation_instructions, create_quiz_instructions, create_study_intructions
+from printing import print_quiz, print_study_response
+from chat_creation import create_client, create_quiz_chat, create_evaluation_chat, create_study_chat
 
 """
 Purpose:
@@ -16,42 +13,44 @@ Return Value:
     None
 """
 def main():
-    # Load the variables stored in the .env file
-    load_dotenv()
-
     while(True):
+        client = create_client()
         # Decide whether the AI will be in quiz mode or study mode
-        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        mode = input("Enter 'quiz' for quiz mode and 'study' for study mode")
-        topic = input("What topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
+        mode = input("Enter 'quiz' for quiz mode and 'study' for study mode: ")
         if mode == "quiz":
-            quiz_schema = study_quiz.create_quiz_schema()
-            quiz_instructions = study_quiz.create_quiz_instructions(topic)
-            chat = client.chats.create(
-                model="gemini-3.6-flash", 
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json", 
-                    response_schema=quiz_schema, 
-                    system_instruction=quiz_instructions
-                )
-            )
-            while(True):
-                pass
-            break
-
+            topic = input("What broad topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
+            score = 0
+            specific_topic = input("What specifc topic should the quiz be about\n")
+            total_questions = input("How many questions do you want in the quiz?\n")
+            total_questions = int(total_questions)
+            quiz_schema = create_quiz_schema()
+            feedback_schema = create_feedback_schema()
+            quiz_instructions = create_quiz_instructions(topic)
+            evaluation_instructions = create_evaluation_instructions(topic)
+            quiz_chat = create_quiz_chat(client, quiz_schema, quiz_instructions)
+            evaluation_chat = create_evaluation_chat(client, feedback_schema, evaluation_instructions)
+            increment = 0
+            while increment < total_questions:
+                print_quiz(quiz_chat, evaluation_chat, specific_topic, score)
+                increment += 1
         elif mode == "study":
-            study_schema = study_tutor.create_study_schema()
-            topic_instructions = study_tutor.create_study_intructions(topic)
-            chat = client.chats.create(
-                model = "gemini-3.6-flash",
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=study_schema,
-                    system_instruction=topic_instructions
-                    )
-                )
+            topic = input("What broad topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
+            study_schema = create_study_schema()
+            topic_instructions = create_study_intructions(topic)
+            study_chat = create_study_chat(client, study_schema, topic_instructions)
             while(True):
-                pass
+                question = input("\nYou: ")
+
+                if question == "done":
+                    break
+                if len(question) > 2000:
+                    print("Enter a shorter question.")
+                    continue
+                if question.strip() == "":
+                    print("Enter a response, Please.")
+                    continue
+
+                print_study_response(study_chat, question)
             break
         else:
             print("Enter a valid mode")
