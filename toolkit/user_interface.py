@@ -91,3 +91,11 @@ def print_study_response(chat, question):
             print(result.practice_question)
         except:
             print("Sorry I couldn't generate a response\n Please try again.")
+
+def get_quiz_info():
+    specific_topic = input("What specifc topic should the quiz be about\n")
+    difficulty = input("What difficulty do you want the quiz\n")
+    total_questions = input("How many questions do you want in the quiz?\n")
+    total_questions = int(total_questions)
+    return specific_topic, difficulty, total_questions
+     

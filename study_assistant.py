@@ -1,7 +1,7 @@
 import math
 from toolkit.schema_creation import create_feedback_schema, create_quiz_schema, create_study_schema
 from toolkit.instruction_creation import create_evaluation_instructions, create_quiz_instructions, create_study_intructions
-from toolkit.printing import print_quiz, print_study_response
+from toolkit.user_interface import print_quiz, print_study_response, get_quiz_info
 from toolkit.chat_creation import create_client, create_quiz_chat, create_evaluation_chat, create_study_chat
 
 """
@@ -26,10 +26,7 @@ def main():
 
             # Create variables that will store information about how long the quiz is and what the results are
             score = 0
-            specific_topic = input("What specifc topic should the quiz be about\n")
-            difficulty = input("What difficulty do you want the quiz\n")
-            total_questions = input("How many questions do you want in the quiz?\n")
-            total_questions = int(total_questions)
+            specific_topic, difficulty, total_questions = get_quiz_info()
 
             # Set all the variables needed to createthe chats that will run the quiz and feedback
             quiz_schema = create_quiz_schema()
