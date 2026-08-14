@@ -1,61 +1,99 @@
-from pydantic import BaseModel
-
-"""
-Purpose:
-    This function is used to create the schema that is 
-    used to control the format of how the AI will respond if the user 
-    choses a quiz. 
-Parameters:
-    None
-Return Value:
-    QuizQuestion: class
-        This class holds the schema for a quiz question
-"""
-def create_quiz_schema():
-    # Create the class used for the quiz
-    class QuizQuestion(BaseModel):
-       question: str
-    return QuizQuestion
+from google import genai
+from google.genai import types
+from dotenv import load_dotenv
+import os
 
 """
 Purpose: 
-    Creates the schema that controls the format of the evaluation to the response
-Parameters: 
-    None
-Return Value:
-    Evaluation: class
-        Holds the schema that controls the format of the answer evaluation
-"""
-def create_feedback_schema():
-    # Create the class used to evaluate a questions answer
-    class Feedback(BaseModel):
-        correct: bool
-        score: int
-        feedback: str
-    return Feedback
-
-"""
-Purpose: 
-    Creates the schema that controls how the AI helps
-    a student study. 
+    Create the client that uses my api key to connect to the gemini AI that is being 
+    used for this program
 Parameters:
     None
 Return Value:
-    StudyResponse: class
-        Crafts how the AI will respond to the questions of
-        the student. 
+    client: genai.Client()
+        The connection to the api and AI that allows me to build chats. 
 """
-def create_study_schema():   
-    # Create the Python schemas neccessary for the program
-    class StudyReponse(BaseModel):
-        topic: str
-        difficulty: str
-        explanation: str
-        example: str
-        practice_question: str
-    return StudyReponse
+def create_client():
+    load_dotenv()
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    return client
 
-    """
+"""
+Purpose: 
+    Creates the chat that is used to create quiz questions.
+Parameters:
+    client: genai_Client()
+        How I connect to the api and AI
+    quiz_schema: QuizQuestion
+        Details how the chat is going to format its respoonse
+    quiz_instructions: str
+        Details how the chat should act. 
+Return Value: 
+    quiz_chat: chat
+        Takes in messages from the user and gives the to the AI and gets a response back.
+"""
+def create_quiz_chat(client, quiz_schema, quiz_instructions):
+    quiz_chat = client.chats.create(
+        model="gemini-3.6-flash", 
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json", 
+            response_schema=quiz_schema, 
+            system_instruction=quiz_instructions
+        )
+    )
+    return quiz_chat
+
+"""
+Purpose: 
+    Creates the chat that is used to create question and answer evaluations.
+Parameters:
+    client: genai_Client()
+        How I connect to the api and AI
+    feedback_schema: Feedback
+        Details how the chat is going to format its respoonse
+    evaluation_instructions: str
+        Details how the chat should act. 
+Return Value: 
+    evaluation_chat: chat
+        Takes in messages from the user and gives the to the AI and gets a response back.
+"""
+def create_evaluation_chat(client, feedback_schema, evaluation_instructions):
+    evaluation_chat = client.chats.create(
+        model="gemini-3.6-flash", 
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json", 
+            response_schema=feedback_schema, 
+            system_instruction=evaluation_instructions
+        )
+    )
+    return evaluation_chat
+
+"""
+Purpose: 
+    Creates the chat that is used to study and interact with.
+Parameters:
+    client: genai_Client()
+        How I connect to the api and AI
+    study_schema: QuizQuestion
+        Details how the chat is going to format its respoonse
+    study_instructions: str
+        Details how the chat should act. 
+Return Value: 
+    study_chat: chat
+        Takes in messages from the user and gives the to the AI and gets a response back.
+"""
+def create_study_chat(client, study_schema, study_instructions):
+    study_chat = client.chats.create(
+        model = "gemini-3.6-flash",
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=study_schema,
+            system_instruction=study_instructions
+        )
+    )
+    return study_chat
+
+"""
 Purpose: 
     Creates the intructions that controls how the AI thinks
     about the inputs. 
@@ -118,3 +156,51 @@ def create_study_intructions(topic):
         - Don't assume advanced knowledge.
         """
     return topic_instructions
+
+"""
+Purpose: 
+    Take in a chat, a question, and previous questions then create a new 
+    question. 
+Parameters:    
+    quiz_chat: chat
+        The chat that will be used to respond to the user.
+    topic: str
+        The topic that the quiz is to be based on
+    asked_questions: list
+        A list that stores all previous questions. 
+Return Value: 
+    response: chat message
+        The message that contains info based on the schema
+"""
+def quiz_send_message(quiz_chat, topic, asked_questions):
+    response = quiz_chat.send_message(
+        f"""
+        {topic}. Please don't repeat these previous questions.
+        Previous Questions: \n
+        {"\n".join(asked_questions)}
+        """)
+    return response
+
+"""
+Purpose: 
+    Craft an evaluation response to the question and student answer.
+Parameters: 
+    evaluation_chat: chat
+        The chat the includes a schema to craft a score and feedback
+    question: chat message
+        The message the quiz chat produced which contains the question the
+        student answers
+    student_answer: str
+        The answer the student gave to the question the AI had proposed
+"""
+def evaluation_send_message(evaluation_chat, question, student_answer):
+    evaluation_response = evaluation_chat.send_message(
+        f"""
+        Question:
+        {question.question}
+    
+        Student answer:
+        {student_answer}
+        """
+        )
+    return evaluation_response

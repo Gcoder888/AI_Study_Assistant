@@ -26,20 +26,6 @@ def get_topic():
      topic = input("What broad topic do you want to study (Ex. Math, English, Python, or Rocket League): ")
      return topic
 
-"""
-Purpose: 
-    Print the final score and percentage of the quiz
-Parameters:
-    score: int
-        This holds the score that the user achieved during the quiz
-    total_questions: int
-        This holds the total amount of questions
-Return Value:
-    None
-"""
-def print_final_score(score, total_questions):
-    print(f"Score: {score}/{total_questions}")
-    print(f"{math.floor(score/total_questions)}%")
 
 """
 Purpose:    
@@ -67,109 +53,6 @@ def get_question():
         return question, "continue"   
 
 """
-Purpose: 
-    Print the quiz question and the evaluation response that the AI provides. 
-Parameters: 
-    quiz_chat: API chat
-        Creates the quiz questions
-    evaluation_chat: API chat
-        Creates the evaluation reponse to student answer
-    question: str
-        Holds what the question should be about
-    score: int
-        Holds the score that the student gets on the quiz
-Return Value:
-    None
-"""
-def print_quiz(quiz_chat, evaluation_chat, question, score):
-    # Print out the results of a quiz question and the evaluation of a response
-    asked_questions = []
-    # AI
-    try:
-        response = quiz_chat.send_message(
-             f"""
-             {question}. Please don't repeat these previous questions.
-             Previous Questions: \n
-             {"\n".join(asked_questions)}
-             """)
-    except:
-         # Print
-         print("Sorry I couldn't generate your quiz.\n Please try again.")
-
-    quiz_question = response.parsed
-
-    asked_questions.append(quiz_question.question)
-
-    # Print the question and take in the students answer
-    # Print
-    print("\nQuestion: ", quiz_question.question)
-
-    student_answer = input("Your answer: ")
-
-    if student_answer == "done":
-         return
-
-    # Craft an evaluation 
-    # AI
-    try:
-        evaluation_response = evaluation_chat.send_message(
-            f"""
-            Question:
-            {quiz_question.question}
-
-            Student answer:
-            {student_answer}
-            """
-        )
-    except:
-         # Print
-         print("Sorry I couldn't generate your feedback.\n Please try again.")
-
-    # Change the score for the quiz and portray the evaluation
-    evaluation = evaluation_response.parsed
-
-    # Print
-    if evaluation.correct:
-        score += 1
-        print("Correct!")
-    else:
-        print("Not quite.")
-
-    print("Feedback: ", evaluation.feedback)
-
-    """
-Purpose: 
-    Formats and prints the reponse that the AI created. 
-Parameters: 
-    chat: API chat
-        The chat the connects with the AI cna gives it instructions on how to 
-        respond
-    question: str
-        The question that the student provided and wants answered. 
-Return Value:
-    None
-"""
-def print_study_response(chat, question):
-    # Ensure that the errors don't shut down the program. 
-        try:
-            response = chat.send_message(question)
-
-            result = response.parsed
-
-            print(f"\nTopic: {result.topic}")
-            print(f"\nDifficulty: {result.difficulty}")
-            print("\nExplanation: ")
-            print(result.explanation)
-
-            print("\nExample: ")
-            print(result.example)
-
-            print("\nPractice")
-            print(result.practice_question)
-        except:
-            print("Sorry I couldn't generate a response\n Please try again.")
-
-"""
 Purpose:
     Gets the values that will be used to create the quiz. 
 Parameters:
@@ -184,9 +67,110 @@ Return Value:
         to be. 
 """
 def get_quiz_info():
-    specific_topic = input("What specifc topic should the quiz be about\n")
-    difficulty = input("What difficulty do you want the quiz\n")
-    total_questions = input("How many questions do you want in the quiz?\n")
+    specific_topic = input("What specific topic should the quiz be about: ")
+    difficulty = input("What difficulty do you want the quiz: ")
+    total_questions = input("How many questions do you want in the quiz?: ")
     total_questions = int(total_questions)
     return specific_topic, difficulty, total_questions
-     
+
+"""
+Purpose: 
+    Get the students response to the question that has been posed
+    by the AI
+Parameters: 
+    quiz_question: chat message
+        A message from the chat that stores the schema for a quiz 
+        question. 
+Return Value: 
+    student_answer: str
+        A string with the students answer to the question. 
+"""
+def get_student_answer(quiz_question):
+    print("\nQuestion: ", quiz_question.question)
+    
+    student_answer = input("Your answer: ")
+
+    return student_answer
+
+"""
+Purpose: 
+    Prints a message that tells the user that the api has 
+    failed to work and to try again. 
+Parameters: 
+    None
+Return Value: 
+    None
+"""
+def print_api_error_message():
+    print("Sorry I couldn't generate your feedback.\n Please try again.")
+
+"""
+Purpose:
+    Prints the evaluation that tells the user if they were correct or wrong
+    and prints feedback based on their response. Furthermore it creates a 
+    int that is either 1 or 0 that will be added to the users score. 
+Parameters: 
+    evaluation: chat message
+        Message from the chat that contains the feedback schema
+Return Value:
+    1 or 0: int
+        A value that will be added to the score. 1 if they were correct
+        0 if they were wrong. 
+"""
+def print_evaluation(evaluation):
+    score = 0
+    if evaluation.correct:
+        print("Correct!")
+        score = 1
+    else:
+        print("Not quite.")
+        score = 0
+    print("Feedback: ", evaluation.feedback)
+    return score
+
+"""
+Purpose: 
+    Print the final score and percentage of the quiz
+Parameters:
+    score: int
+        This holds the score that the user achieved during the quiz
+    total_questions: int
+        This holds the total amount of questions
+Return Value:
+    None
+"""
+def print_final_score(score, total_questions):
+    print(f"Score: {score}/{total_questions}")
+    print(f"{math.floor((score/total_questions)*100)}%")
+
+"""
+Purpose: 
+    Formats and prints the reponse that the AI created. 
+Parameters: 
+    chat: API chat
+        The chat the connects with the AI cna gives it instructions on how to 
+        respond
+    question: str
+        The question that the student provided and wants answered. 
+Return Value:
+    None
+"""
+def print_study_response(chat, question):
+    # Ensure that the errors don't shut down the program. 
+    try:
+        response = chat.send_message(question)
+
+        result = response.parsed
+
+        print(f"\nTopic: {result.topic}")
+        print(f"\nDifficulty: {result.difficulty}")
+        print("\nExplanation: ")
+        print(result.explanation)
+
+        print("\nExample: ")
+        print(result.example)
+
+        print("\nPractice")
+        print(result.practice_question)
+    except:
+        print("Sorry I couldn't generate a response\n Please try again.")
