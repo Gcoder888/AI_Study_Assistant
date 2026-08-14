@@ -14,7 +14,10 @@ Parameters:
 """
 def print_quiz(quiz_chat, evaluation_chat, question, score):
     # Print out the results of a quiz question and the evaluation of a response
-    response = quiz_chat.send_message(question)
+    try:
+        response = quiz_chat.send_message(question)
+    except:
+         print("Sorry I couldn't generate your quiz.\n Please try again.")
 
     quiz_question = response.parsed
 
@@ -27,15 +30,18 @@ def print_quiz(quiz_chat, evaluation_chat, question, score):
          return
 
     # Craft an evaluation 
-    evaluation_response = evaluation_chat.send_message(
-        f"""
-        Question:
-        {quiz_question.question}
+    try:
+        evaluation_response = evaluation_chat.send_message(
+            f"""
+            Question:
+            {quiz_question.question}
 
-        Student answer:
-        {student_answer}
-        """
-    )
+            Student answer:
+            {student_answer}
+            """
+        )
+    except:
+         print("Sorry I couldn't generate your feedback.\n Please try again.")
 
     # Change the score for the quiz and portray the evaluation
     evaluation = evaluation_response.parsed
@@ -76,4 +82,4 @@ def print_study_response(chat, question):
             print("\nPractice")
             print(result.practice_question)
         except:
-            print("Sorry I couldn't generate your quiz\n Please try again.")
+            print("Sorry I couldn't generate a response\n Please try again.")
