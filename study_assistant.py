@@ -1,8 +1,8 @@
 import math
-from schema_creation import create_feedback_schema, create_quiz_schema, create_study_schema
-from instruction_creation import create_evaluation_instructions, create_quiz_instructions, create_study_intructions
-from printing import print_quiz, print_study_response
-from chat_creation import create_client, create_quiz_chat, create_evaluation_chat, create_study_chat
+from toolkit.schema_creation import create_feedback_schema, create_quiz_schema, create_study_schema
+from toolkit.instruction_creation import create_evaluation_instructions, create_quiz_instructions, create_study_intructions
+from toolkit.printing import print_quiz, print_study_response
+from toolkit.chat_creation import create_client, create_quiz_chat, create_evaluation_chat, create_study_chat
 
 """
 Purpose:
