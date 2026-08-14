@@ -10,12 +10,11 @@ Return Value:
     topic_instructions: str
         This holds the instructions that control how an AI acts
 """
-def create_quiz_instructions(topic: str):
+def create_quiz_instructions(topic, difficulty):
     # Create specificed quiz instructions for a topic
     topic_instructions = f"""You are a {topic} quiz generator
         Create one {topic} question at a time. 
-        The question should match the requested topic
-        and difficulty. 
+        Make the question match a {difficulty} difficulty.
         Do not provide the answer. 
         """
     return topic_instructions
@@ -31,7 +30,7 @@ Return Value:
     topic_instructions:
         Includes the instructions for the evaluation chat. 
 """
-def create_evaluation_instructions(topic: str):
+def create_evaluation_instructions(topic):
     # Create specificed evaluation instructions
     topic_instructions = f"""You are a answer evaluator for
     topic: {topic}. Understand that the student is learning and 

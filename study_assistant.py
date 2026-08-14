@@ -27,13 +27,14 @@ def main():
             # Create variables that will store information about how long the quiz is and what the results are
             score = 0
             specific_topic = input("What specifc topic should the quiz be about\n")
+            difficulty = input("What difficulty do you want the quiz\n")
             total_questions = input("How many questions do you want in the quiz?\n")
             total_questions = int(total_questions)
 
             # Set all the variables needed to createthe chats that will run the quiz and feedback
             quiz_schema = create_quiz_schema()
             feedback_schema = create_feedback_schema()
-            quiz_instructions = create_quiz_instructions(topic)
+            quiz_instructions = create_quiz_instructions(topic, difficulty)
             evaluation_instructions = create_evaluation_instructions(topic)
 
             # Create the chats necessary to run the quiz

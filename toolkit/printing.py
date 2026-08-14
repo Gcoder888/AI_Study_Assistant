@@ -14,12 +14,20 @@ Parameters:
 """
 def print_quiz(quiz_chat, evaluation_chat, question, score):
     # Print out the results of a quiz question and the evaluation of a response
+    asked_questions = []
     try:
-        response = quiz_chat.send_message(question)
+        response = quiz_chat.send_message(
+             f"""
+             {question}. Please don't repeat these previous questions.
+             Previous Questions: \n
+             {"\n".join(asked_questions)}
+             """)
     except:
          print("Sorry I couldn't generate your quiz.\n Please try again.")
 
     quiz_question = response.parsed
+
+    asked_questions.append(quiz_question.question)
 
     # Print the question and take in the students answer
     print("\nQuestion: ", quiz_question.question)
