@@ -192,6 +192,9 @@ Parameters:
         student answers
     student_answer: str
         The answer the student gave to the question the AI had proposed
+Return Value: 
+    evaluation_response: chat message
+        The message that contains info based on the evaluation schema
 """
 def evaluation_send_message(evaluation_chat, question, student_answer):
     evaluation_response = evaluation_chat.send_message(
@@ -204,3 +207,19 @@ def evaluation_send_message(evaluation_chat, question, student_answer):
         """
         )
     return evaluation_response
+
+"""
+Purpose: 
+    Craft a study response that will answer the students question and give examples
+Parameters: 
+    study_chat: chat
+        The chat the includes the schema that helps a student study.
+    question: str
+        The question that the student wishes to have answerd. 
+Return Value:
+    response: chat message
+        The message that contains info based on the study schema
+"""
+def study_send_message(study_chat, question):
+    response = study_chat.send_message(question)
+    return response

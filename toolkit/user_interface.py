@@ -51,6 +51,7 @@ def get_question():
     if question.strip() == "":
         print("Enter a response, Please.")
         return question, "continue"   
+    return question, ""
 
 """
 Purpose:
@@ -110,8 +111,8 @@ Purpose:
     and prints feedback based on their response. Furthermore it creates a 
     int that is either 1 or 0 that will be added to the users score. 
 Parameters: 
-    evaluation: chat message
-        Message from the chat that contains the feedback schema
+    evaluation: parsed chat message
+        Parsed message from the chat that contains the feedback schema
 Return Value:
     1 or 0: int
         A value that will be added to the score. 1 if they were correct
@@ -145,23 +146,15 @@ def print_final_score(score, total_questions):
 
 """
 Purpose: 
-    Formats and prints the reponse that the AI created. 
+    Print the study response structured by the schema created for the study mode
 Parameters: 
-    chat: API chat
-        The chat the connects with the AI cna gives it instructions on how to 
-        respond
-    question: str
-        The question that the student provided and wants answered. 
-Return Value:
+    result: parsed chat message
+        Parsed message from the ai in which the different areas of the reponse are 
+        accessible
+Return Value: 
     None
 """
-def print_study_response(chat, question):
-    # Ensure that the errors don't shut down the program. 
-    try:
-        response = chat.send_message(question)
-
-        result = response.parsed
-
+def print_study_response(result):
         print(f"\nTopic: {result.topic}")
         print(f"\nDifficulty: {result.difficulty}")
         print("\nExplanation: ")
@@ -172,5 +165,3 @@ def print_study_response(chat, question):
 
         print("\nPractice")
         print(result.practice_question)
-    except:
-        print("Sorry I couldn't generate a response\n Please try again.")
