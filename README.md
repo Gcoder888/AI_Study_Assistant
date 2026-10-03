@@ -66,7 +66,7 @@
 ## Python Structure
 
 ---
-
+```text
 |
 |
 |______ai_env
@@ -108,7 +108,7 @@ study.py
 
 user_interface.py
     Handles user input and displaying information to the user. 
-
+```
 ---
 
 ## Example Output
@@ -116,6 +116,7 @@ user_interface.py
 ---
 
 ### Quiz
+```text
 Enter 'quiz' for quiz mode and 'study' for study mode: quiz
 What broad topic do you want to study (Ex. Math, English, Python, or Rocket League): python
 What specific topic should the quiz be about: lists
@@ -156,6 +157,7 @@ Practice
 How would you write a line of Python code to create a list named 'colors' that contains three color names as strings: 'red', 'green', and 'blue'?
 
 You: done
+```
 
 ---
 
@@ -178,6 +180,7 @@ You: done
 
 ---
 
+```text
 This project was developed as part of a structured Python and AI application development learning journey.
 
 Rather than following a traditional tutorial or simply copying a finished project, I built the application side by side with ChatGPT, introducing new concepts as they became relevant to the project. I implemented the code, tested features, worked through errors, and gradually refactored the application as the architecture became more complex.
@@ -208,6 +211,7 @@ The distinction between AI reasoning and traditional program logic
 A major part of the learning process was understanding why each component was designed the way it was rather than simply making the application work. ChatGPT served as a coding tutor and development partner, helping me understand unfamiliar concepts, debug problems, and make architectural decisions while I remained responsible for implementing and testing the project.
 
 The goal of the project was therefore not just to create an AI study assistant, but to develop the skills needed to design, build, debug, and expand Python applications independently while effectively using AI as a development tool.
+```
 
 ---
 
